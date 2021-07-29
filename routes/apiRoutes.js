@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const Exercise = require("../models/Exercise");
 
-//Add Exercises to most recent plan:
+//In the public folder, there is an api.js file. This file is used to create the required methods for each determined route.
+
+//Add Exercises to most recent plan. Updating a exercise using a put request:
 
 
 //Add a new exercise to a new workout plan:
@@ -19,7 +21,7 @@ router.post("/api/workouts", ({ body }, res) => {
 });
 
 
-//View combined weight of multiple exercises from past 7 workouts on stats page:
+//View the last workout (api.js). This requires a get request at the following route:
 router.get("/api/workouts", (req, res) => {
     Exercise.find({})
       .then(dbExercise => {
@@ -30,9 +32,16 @@ router.get("/api/workouts", (req, res) => {
       });
   });
 
-
-//View total duration of of each workout from the past 7 workouts on the stats page:
-
+//View a range of workouts:
+router.get("/api/workouts/range", (req, res) => {
+    Exercise.find({})
+      .then(dbExercise => {
+        res.json(dbExercise);
+      })
+      .catch(err => {
+        res.status(400).json(err);
+      });
+  });
 
 
 module.exports = router;
