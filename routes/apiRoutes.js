@@ -1,34 +1,45 @@
 const router = require("express").Router();
-const Exercise = require("../models/Exercise");
+const Exercise = require("../models/exercisemodel.js");
 
 //In the public folder, there is an api.js file. This file is used to create the required methods for each determined route.
 
+//Create a sum aggregate in order to add all the total durations together for an exercise:
+
+
 //Add Exercises to most recent plan. Updating a exercise using a put request:
+router.put("/api/workouts/:id",  (req, res) =>{
+  Exercise.findByIdAndUpdate(
+    req.params.id,
+    {$push: {exercises: req.body}}
+  ).then(data => {
+    console.log(data);
+    res.json(data);
+  })
+  .catch(err => {
+    res.status(400).json(err);
+  });
+});
 
 
 //Add a new exercise to a new workout plan:
 //path from the api.js file in the public folder:
-router.post("/api/workouts", async ({ body }, res) => {
+router.post("/api/workouts",  (req, res) => {
+  // console.log("inside post");
  
-  try{
-    const input = await Exercise.create(body);
-    res.json.parse(input);
-
-  }catch(err){console.log(err)}
-
-    // Exercise.create(body)
-    //   .then(data => {
-    //     res.json(data);
-    //   })
-    //   .catch(err => {
-    //     res.status(400).json(err);
-    //   });
+  //Create the item to be inserted in the db. Does not yet have any data, the put request will add in the data.
+    Exercise.create({})
+      .then(data => {
+        // console.log(data);
+        res.json(data);
+      })
+      .catch(err => {
+        res.status(400).json(err);
+      });
 });
-
 
 //View the last workout (api.js). This requires a get request at the following route:
 router.get("/api/workouts", (req, res) => {
-    Exercise.find({})
+    Exercise.aggregate([{$set: {totalDuration: {$sum: "$exercises.duration"}}}])
       .then(dbExercise => {
         res.json(dbExercise);
       })
@@ -37,9 +48,9 @@ router.get("/api/workouts", (req, res) => {
       });
   });
 
-//View a range of workouts:
+//View a range of workouts. Add aggregate to add a sum of the total duration and add to the get request. Limit to the past 7 workouts of data:
 router.get("/api/workouts/range", (req, res) => {
-    Exercise.find({})
+    Exercise.aggregate([{$set: {totalDuration: {$sum: "$exercises.duration"}}}]).limit(7)
       .then(dbExercise => {
         res.json(dbExercise);
       })
