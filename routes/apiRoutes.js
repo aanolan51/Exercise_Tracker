@@ -10,7 +10,8 @@ const Exercise = require("../models/exercisemodel.js");
 router.put("/api/workouts/:id",  (req, res) =>{
   Exercise.findByIdAndUpdate(
     req.params.id,
-    {$push: {exercises: req.body}}
+    {$push: {exercises: req.body}},
+    {new:true}
   ).then(data => {
     console.log(data);
     res.json(data);
@@ -48,9 +49,10 @@ router.get("/api/workouts", (req, res) => {
       });
   });
 
-//View a range of workouts. Add aggregate to add a sum of the total duration and add to the get request. Limit to the past 7 workouts of data:
+//View a range of workouts. Add aggregate to add a sum of the total duration and add to the get request. 
+//Sort the data in descending order by using the -1 indicator for the id. Limit to the past 7 workouts of data:
 router.get("/api/workouts/range", (req, res) => {
-    Exercise.aggregate([{$set: {totalDuration: {$sum: "$exercises.duration"}}}]).limit(7)
+    Exercise.aggregate([{$set: {totalDuration: {$sum: "$exercises.duration"}}}, {$sort:{_id: -1}}]).limit(7)
       .then(dbExercise => {
         res.json(dbExercise);
       })
