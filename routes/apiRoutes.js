@@ -8,12 +8,13 @@ const Exercise = require("../models/Exercise");
 
 //Add a new exercise to a new workout plan:
 //path from the api.js file in the public folder:
-router.post("/api/workouts", ({ body }, res) => {
-    // console.log(body);
+router.post("/api/workouts", async ({ body }, res) => {
+  console.log("In post request");
+    console.log(body);
 
     Exercise.create(body)
-      .then(dbExercise => {
-        res.json(dbExercise);
+      .then(data => {
+        res.json(data);
       })
       .catch(err => {
         res.status(400).json(err);
