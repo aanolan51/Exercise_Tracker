@@ -3,9 +3,6 @@ const Exercise = require("../models/exercisemodel.js");
 
 //In the public folder, there is an api.js file. This file is used to create the required methods for each determined route.
 
-//Create a sum aggregate in order to add all the total durations together for an exercise:
-
-
 //Add Exercises to most recent plan. Updating a exercise using a put request:
 router.put("/api/workouts/:id",  (req, res) =>{
   Exercise.findByIdAndUpdate(
